@@ -1,0 +1,161 @@
+<!--Criar BOT para pegar cotação de certas criptomoedas que acompanho, criando um excel e enviando para mim por email-->
+<!--Bitcoin, Ethereum, XRP, Avalanche e Solana-->
+<AMREGION NAME="Variáveis" COLLAPSE="no" />
+<AMVARIABLE NAME="strURL" VALUE="" />
+<AMVARIABLE NAME="vSession_Excel" VALUE="" />
+<AMVARIABLE NAME="vSession" VALUE="" />
+<AMVARIABLE NAME="vSession2" VALUE="" />
+<AMVARIABLE NAME="strArquivoExcel" VALUE="" />
+<AMVARIABLE NAME="strPastaExcel" VALUE="CAMINHO DA PASTA ????" />
+<AMVARIABLE NAME="vBitcoin" VALUE="" />
+<AMVARIABLE NAME="vEthereum" VALUE="" />
+<AMVARIABLE NAME="XRP" VALUE="" />
+<AMVARIABLE NAME="vAvalanche" VALUE="" />
+<AMVARIABLE NAME="vSolana" VALUE="" />
+<AMVARIABLE NAME="strNameBitcoin" VALUE="" />
+<AMVARIABLE NAME="strPrecoBitcoin" VALUE="" />
+<AMVARIABLE NAME="strVariacaoBitcoin" VALUE="" />
+<AMVARIABLE NAME="strNameEthereum" VALUE="" />
+<AMVARIABLE NAME="strPrecoEthereum" VALUE="" />
+<AMVARIABLE NAME="strVariacaoEthereum" VALUE="" />
+<AMVARIABLE NAME="strNameXRP" VALUE="" />
+<AMVARIABLE NAME="strPrecoXRP" VALUE="" />
+<AMVARIABLE NAME="strVariacaoXRP" VALUE="" />
+<AMVARIABLE NAME="strNameAvalanche" VALUE="" />
+<AMVARIABLE NAME="strPrecoAvalanche" VALUE="" />
+<AMVARIABLE NAME="strVariacaoAvalanche" VALUE="" />
+<AMVARIABLE NAME="strNameSolana" VALUE="" />
+<AMVARIABLE NAME="strPrecoSolana" VALUE="" />
+<AMVARIABLE NAME="strVariacaoSolana" VALUE="" />
+<AMENDREGION />
+<!--     -->
+<AMREGION NAME="Conectando ao banco de dados" COLLAPSE="no" />
+<AMVARIABLE ACTIVITY="set" VARIABLENAME="strArquivoExcel" VALUE="CAMINHO DO ARQUIVO ??" />
+<AMDATABASE SESSION="%vSession_Excel%" CONNECTIONTYPE="connection_string" CONNECTION="Provider=Microsoft.ACE.OLEDB.12.0;Data Source=%strArquivoExcel%;Extended Properties=&quot;Excel 12.0 Xml;HDR=YES&quot;;Persist Security Info=False" />
+<AMENDREGION />
+<!--     -->
+<AMREGION NAME="Navegação página inicial" COLLAPSE="no" />
+<AMVARIABLE ACTIVITY="set" VARIABLENAME="strURL" VALUE="https://www.infomoney.com.br/ferramentas/criptomoedas/" />
+<AMWEBBROWSER URL="%strURL%" BROWSER="chrome" SESSION="%vSession%" />
+<AMLOOP FROM="1" TO="60" />
+<AMIF ACTIVITY="window_exists" WINDOWTITLE="Criptomoedas | InfoMoney - Google Chrome" />
+<AMWINDOW ACTIVITY="maximize" WINDOWTITLE="Criptomoedas | InfoMoney - Google Chrome" />
+<AMBREAK />
+<AMIF ACTIVITY="end" />
+<AMWAIT SCALAR="1" />
+<AMSHOWDIALOG MESSAGE="Navegador ou site não liberado, executando nova tentativa." COUNTDOWNDELAY="3" />
+<AMLOOP ACTIVITY="end" />
+<AMIF ACTIVITY="window_exists" WINDOWTITLE="Criptomoedas | InfoMoney - Google Chrome" ACTION="close" />
+<AMSHOWDIALOG MESSAGE="Navegador ou site não liberado, tente novamente mais tarde!" COUNTDOWNDELAY="3" />
+<AMIF ACTIVITY="end" />
+<AMENDREGION />
+<!--     -->
+<AMREGION NAME="Acessar pasta Cotações Criptomoedas, verificar e excluir possível arquivo" COLLAPSE="no" />
+<AMIF ACTIVITY="file_exist" FILE="%strPastaExcel%\*" />
+<AMFILESYSTEM ACTIVITY="delete" SOURCE="%strPastaExcel%\*" TORECYCLE="YES" />
+<AMSHOWDIALOG MESSAGE="Todos os arquivos foram excluídos." COUNTDOWNDELAY="2" />
+<AMELSE />
+<AMSHOWDIALOG MESSAGE="Não existe nenhum arquivo neste diretório!" COUNTDOWNDELAY="2" />
+<AMIF ACTIVITY="end" />
+<AMIF ACTIVITY="folder_exist" FOLDER="%strPastaExcel%\*" />
+<AMFILESYSTEM ACTIVITY="delete" MODE="folder" SOURCE="%strPastaExcel%\*" TORECYCLE="YES" />
+<AMSHOWDIALOG MESSAGE="Todas as pastas foram excluídas" COUNTDOWNDELAY="2" />
+<AMELSE />
+<AMSHOWDIALOG MESSAGE="Não existe nenhuma pasta neste diretório!" COUNTDOWNDELAY="2" />
+<AMIF ACTIVITY="end" />
+<AMENDREGION />
+<AMREGION NAME="Navegando entre as criptomoeadas" COLLAPSE="no" />
+<AMWINDOW WINDOWTITLE="Criptomoedas | InfoMoney - Google Chrome" />
+<AMWEBBROWSER ACTIVITY="navigate" SESSION="%vSession2%" URL="https://www.infomoney.com.br/BTC" />
+<AMWEBBROWSER ACTIVITY="state" SESSION="%vSession2%" WAITTIME="1" />
+<AMSHOWDIALOG MESSAGE="Coletando dados!" COUNTDOWNDELAY="3" />
+<AMWEBBROWSER ACTIVITY="getvalue" HTMLTAG="h1" HTMLCONTENTS="Bitcoin (BTC)" SESSION="%vSession2%" RESULTVARIABLE="strNameBitcoin" ATTRIBUTE=":text" />
+<AMWEBBROWSER ACTIVITY="getvalue" HTMLTAG="p" USEMATCH="12" SESSION="%vSession2%" RESULTVARIABLE="strPrecoBitcoin" ATTRIBUTE=":text" />
+<AMWEBBROWSER ACTIVITY="getvalue" AM_RETRY="1" AM_RETRYDELAY="1000" AM_ONERROR="CONTINUE" USEMATCH="1" SESSION="%vSession2%" RESULTVARIABLE="strVariacaoBitcoin" ATTRIBUTE=":text"><HTMLATTRIBUTE NAME="class" VALUE="positive" /></AMWEBBROWSER>
+<AMWEBBROWSER ACTIVITY="getvalue" AM_RETRY="1" AM_RETRYDELAY="1000" AM_ONERROR="CONTINUE" USEMATCH="1" SESSION="%vSession2%" RESULTVARIABLE="strVariacaoBitcoin" ATTRIBUTE=":text"><HTMLATTRIBUTE NAME="class" VALUE="negative" /></AMWEBBROWSER>
+<!--     -->
+<AMWEBBROWSER ACTIVITY="navigate" SESSION="%vSession2%" URL="https://www.infomoney.com.br/ETH" />
+<AMWEBBROWSER ACTIVITY="state" SESSION="%vSession2%" WAITTIME="1" />
+<AMSHOWDIALOG MESSAGE="Coletando dados!" COUNTDOWNDELAY="3" />
+<AMWEBBROWSER ACTIVITY="getvalue" HTMLTAG="h1" HTMLCONTENTS="Ethereum (ETH)" SESSION="%vSession2%" RESULTVARIABLE="strNameEthereum" ATTRIBUTE=":text" />
+<AMWEBBROWSER ACTIVITY="getvalue" HTMLTAG="p" USEMATCH="12" SESSION="%vSession2%" RESULTVARIABLE="strPrecoEthereum" ATTRIBUTE=":text" />
+<AMWEBBROWSER ACTIVITY="getvalue" AM_RETRY="1" AM_RETRYDELAY="1000" AM_ONERROR="CONTINUE" USEMATCH="1" SESSION="%vSession2%" RESULTVARIABLE="strVariacaoEthereum" ATTRIBUTE=":text"><HTMLATTRIBUTE NAME="class" VALUE="positive" /></AMWEBBROWSER>
+<AMWEBBROWSER ACTIVITY="getvalue" AM_RETRY="1" AM_RETRYDELAY="1000" AM_ONERROR="CONTINUE" USEMATCH="1" SESSION="%vSession2%" RESULTVARIABLE="strVariacaoEthereum" ATTRIBUTE=":text"><HTMLATTRIBUTE NAME="class" VALUE="negative" /></AMWEBBROWSER>
+<!--     -->
+<AMWEBBROWSER ACTIVITY="navigate" SESSION="%vSession2%" URL="https://www.infomoney.com.br/XRP" />
+<AMWEBBROWSER ACTIVITY="state" SESSION="%vSession2%" WAITTIME="1" />
+<AMSHOWDIALOG MESSAGE="Coletando dados!" COUNTDOWNDELAY="3" />
+<AMWEBBROWSER ACTIVITY="getvalue" HTMLTAG="h1" HTMLCONTENTS="XRP (XRP)" SESSION="%vSession2%" RESULTVARIABLE="strNameXRP" ATTRIBUTE=":text" />
+<AMWEBBROWSER ACTIVITY="getvalue" HTMLTAG="p" USEMATCH="12" SESSION="%vSession2%" RESULTVARIABLE="strPrecoXRP" ATTRIBUTE=":text" />
+<AMWEBBROWSER ACTIVITY="getvalue" AM_RETRY="1" AM_RETRYDELAY="1000" AM_ONERROR="CONTINUE" USEMATCH="1" SESSION="%vSession2%" RESULTVARIABLE="strVariacaoXRP" ATTRIBUTE=":text"><HTMLATTRIBUTE NAME="class" VALUE="positive" /></AMWEBBROWSER>
+<AMWEBBROWSER ACTIVITY="getvalue" AM_RETRY="1" AM_RETRYDELAY="1000" AM_ONERROR="CONTINUE" USEMATCH="1" SESSION="%vSession2%" RESULTVARIABLE="strVariacaoXRP" ATTRIBUTE=":text"><HTMLATTRIBUTE NAME="class" VALUE="negative" /></AMWEBBROWSER>
+<!--     -->
+<AMWEBBROWSER ACTIVITY="navigate" SESSION="%vSession2%" URL="https://www.infomoney.com.br/AVAX" />
+<AMWEBBROWSER ACTIVITY="state" SESSION="%vSession2%" WAITTIME="1" />
+<AMSHOWDIALOG MESSAGE="Coletando dados!" COUNTDOWNDELAY="3" />
+<AMWEBBROWSER ACTIVITY="getvalue" AM_RETRY="1" AM_RETRYDELAY="1000" AM_ONERROR="CONTINUE" HTMLTAG="h1" HTMLCONTENTS="Avalanche (AVAX)" SESSION="%vSession2%" RESULTVARIABLE="strNameAvalanche" ATTRIBUTE=":text" />
+<AMWEBBROWSER ACTIVITY="getvalue" AM_RETRY="1" AM_RETRYDELAY="1000" AM_ONERROR="CONTINUE" HTMLTAG="p" USEMATCH="12" SESSION="%vSession2%" RESULTVARIABLE="strPrecoAvalanche" ATTRIBUTE=":text" />
+<AMWEBBROWSER ACTIVITY="getvalue" AM_RETRY="1" AM_RETRYDELAY="1000" AM_ONERROR="CONTINUE" USEMATCH="1" SESSION="%vSession2%" RESULTVARIABLE="strVariacaoAvalanche" ATTRIBUTE=":text"><HTMLATTRIBUTE NAME="class" VALUE="positive" /></AMWEBBROWSER>
+<AMWEBBROWSER ACTIVITY="getvalue" AM_RETRY="1" AM_RETRYDELAY="1000" AM_ONERROR="CONTINUE" USEMATCH="1" SESSION="%vSession2%" RESULTVARIABLE="strVariacaoAvalanche" ATTRIBUTE=":text"><HTMLATTRIBUTE NAME="class" VALUE="negative" /></AMWEBBROWSER>
+<!--     -->
+<AMWEBBROWSER ACTIVITY="navigate" SESSION="%vSession2%" URL="https://www.infomoney.com.br/SOL" />
+<AMWEBBROWSER ACTIVITY="state" SESSION="%vSession2%" WAITTIME="1" />
+<AMSHOWDIALOG MESSAGE="Coletando dados!" COUNTDOWNDELAY="3" />
+<AMWEBBROWSER ACTIVITY="getvalue" HTMLTAG="h1" HTMLCONTENTS="Solana (SOL)" SESSION="%vSession2%" RESULTVARIABLE="strNameSolana" ATTRIBUTE=":text" />
+<AMWEBBROWSER ACTIVITY="getvalue" HTMLTAG="p" USEMATCH="12" SESSION="%vSession2%" RESULTVARIABLE="strPrecoSolana" ATTRIBUTE=":text" />
+<AMWEBBROWSER ACTIVITY="getvalue" AM_RETRY="1" AM_RETRYDELAY="1000" AM_ONERROR="CONTINUE" USEMATCH="1" SESSION="%vSession2%" RESULTVARIABLE="strVariacaoSolana" ATTRIBUTE=":text"><HTMLATTRIBUTE NAME="class" VALUE="positive" /></AMWEBBROWSER>
+<AMWEBBROWSER ACTIVITY="getvalue" AM_RETRY="1" AM_RETRYDELAY="1000" AM_ONERROR="CONTINUE" USEMATCH="1" SESSION="%vSession2%" RESULTVARIABLE="strVariacaoSolana" ATTRIBUTE=":text"><HTMLATTRIBUTE NAME="class" VALUE="negative" /></AMWEBBROWSER>
+<AMVARIABLE ACTIVITY="set" VARIABLENAME="strVariacaoBitcoin">%Replace(strVariacaoBitcoin, vbNewLine, "")%</AMVARIABLE>
+<AMVARIABLE ACTIVITY="set" VARIABLENAME="strVariacaoEthereum">%Replace(strVariacaoEthereum, vbNewLine, "")%</AMVARIABLE>
+<AMVARIABLE ACTIVITY="set" VARIABLENAME="strVariacaoXRP">%Replace(strVariacaoXRP, vbNewLine, "")%</AMVARIABLE>
+<AMVARIABLE ACTIVITY="set" VARIABLENAME="strVariacaoAvalanche">%Replace(strVariacaoAvalanche, vbNewLine, "")%</AMVARIABLE>
+<AMVARIABLE ACTIVITY="set" VARIABLENAME="strVariacaoSolana">%Replace(strVariacaoSolana, vbNewLine, "")%</AMVARIABLE>
+<AMSHOWDIALOG COUNTDOWNDELAY="20">Nome = %strNameBitcoin%
+Preço Atual = R$%strPrecoBitcoin%
+Variação = %Trim(strVariacaoBitcoin)%
+
+Nome = %strNameEthereum%
+Preço Atual = R$%strPrecoEthereum%
+Variação = %Trim(strVariacaoEthereum)%
+
+Nome = %strNameXRP%
+Preço Atual = R$%strPrecoXRP%
+Variação = %Trim(strVariacaoXRP)%
+
+Nome =%strNameAvalanche%
+Preço Atual = R$%strPrecoAvalanche%
+Variação =%Trim(strVariacaoAvalanche)%
+
+Nome = %strNameSolana%
+Preço Atual = R$%strPrecoSolana%
+Variação = %Trim(strVariacaoSolana)%</AMSHOWDIALOG>
+<AMWEBBROWSER ACTIVITY="close" SESSION="%vSession%" />
+<AMENDREGION />
+<AMREGION NAME="Inserindo as informações" COLLAPSE="no" />
+<AMDATABASE ACTIVITY="sql_query" AM_ONERROR="CONTINUE" SESSION="%vSession_Excel%">INSERT INTO [sheet1$] (ID, NOME, VALOR, VARIACAO)
+VALUES (1, '%strNameBitcoin%', '%strPrecoBitcoin%', '%Replace(strVariacaoBitcoin, vbNewLine, "")%')</AMDATABASE>
+<AMDATABASE ACTIVITY="sql_query" AM_ONERROR="CONTINUE" SESSION="%vSession_Excel%">INSERT INTO [sheet1$] (ID, NOME, VALOR, VARIACAO)
+VALUES (2, '%strNameEthereum%', '%strPrecoEthereum%', '%Replace(strVariacaoEthereum, vbNewLine, "")%')</AMDATABASE>
+<AMDATABASE ACTIVITY="sql_query" AM_ONERROR="CONTINUE" SESSION="%vSession_Excel%">INSERT INTO [sheet1$] (ID, NOME, VALOR, VARIACAO)
+VALUES (3, '%strNameXRP%', '%strPrecoXRP%', '%Replace(strVariacaoXRP, vbNewLine, "")%')</AMDATABASE>
+<AMDATABASE ACTIVITY="sql_query" AM_ONERROR="CONTINUE" SESSION="%vSession_Excel%">INSERT INTO [sheet1$] (ID, NOME, VALOR, VARIACAO)
+VALUES (4, '%strNameAvalanche%', '%strPrecoAvalanche%', '%Replace(strVariacaoAvalanche, vbNewLine, "")%')</AMDATABASE>
+<AMDATABASE ACTIVITY="sql_query" AM_ONERROR="CONTINUE" SESSION="%vSession_Excel%">INSERT INTO [sheet1$] (ID, NOME, VALOR, VARIACAO)
+VALUES (5, '%strNameSolana%', '%strPrecoSolana%', '%Replace(strVariacaoSolana, vbNewLine, "")%')</AMDATABASE>
+<AMENDREGION />
+<AMREGION NAME="Finalizando o processo" COLLAPSE="no" />
+<AMDATABASE ACTIVITY="close_sql_connection" SESSION="%vSession_Excel%" />
+<AMENDREGION />
+<AMREGION NAME="Enviando Excel por email" COLLAPSE="no" />
+<AMEMAIL ACTIVITY="send" PROTOCOLTYPE="ews" SERVER="smtp.office365.com" USERNAME="exemplo@email.com" PASSWORD="senha" FROM="exemplo@email.com" TO="exemplo@email.com" SUBJECT="Criptomoedas do dia %Format(now(),&quot;DD/MM/YYYY&quot;)%" ATTACH="%strArquivoExcel%">Olá,
+
+Segue em anexo a cotação das criptomoedas do dia %Format(now(),"DD/MM/YYYY")%, hora %Format(now(),"HH:NN:SS")%;
+
+Até logo!</AMEMAIL>
+<AMENDREGION />
+<AMREGION NAME="Excluindo dados da planilha para reprocessamento" COLLAPSE="no" />
+<AMVARIABLE ACTIVITY="set" VARIABLENAME="strArquivoExcel" VALUE="C:\Users\agenterpa2\Desktop\Thiago\Exercícios\moedas.xlsx" AM_ENABLED="NO" />
+<AMDATABASE SESSION="%vSession_Excel%" CONNECTIONTYPE="connection_string" CONNECTION="Provider=Microsoft.ACE.OLEDB.12.0;Data Source=%strArquivoExcel%;Extended Properties=&quot;Excel 12.0 Xml;HDR=YES&quot;;Persist Security Info=False" AM_ENABLED="NO" />
+<AMDATABASE ACTIVITY="sql_query" AM_ONERROR="CONTINUE" SESSION="%vSession_Excel%" SQLQUERY="DELETE * FROM [sheet1$]" AM_ENABLED="NO" />
+<AMDATABASE ACTIVITY="close_sql_connection" SESSION="%vSession_Excel%" AM_ENABLED="NO" />
+<AMENDREGION />
